@@ -1,5 +1,43 @@
 package main
 
-func main() {
+import (
+	"context"
+	"log"
+	"os"
 
+	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/mongo/readpref"
+)
+
+var mongoClient *mongo.Client
+
+func init() {
+	//load .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("env load error", err)
+	}
+	
+	log.Println("env file loaded")
+
+	// create mongodb client
+	mongoClient, err := mongo.Connect(options.Client().ApplyURI(os.Getenv("MONGO_URI")))
+
+
+	if err != nil {
+		log.Fatal("connection error", err)
+	}
+
+	err = mongoClient.Ping(context.Background(), readpref.Nearest());
+	if err != nil {
+		log.Fatal("ping error", err)
+	}
+
+	log.Println("mongodb connected")
+}
+
+func main() {
+	defer mongoClient.Disconnect(context.Background());
 }
