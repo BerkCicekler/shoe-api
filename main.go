@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/BerkCicekler/shoe-api/cmd/api"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -40,4 +41,7 @@ func init() {
 
 func main() {
 	defer mongoClient.Disconnect(context.Background());
+
+	api := api.NewAPIServer(":8080")
+	api.Run()
 }
