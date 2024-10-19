@@ -8,7 +8,9 @@ import (
 	"github.com/BerkCicekler/shoe-api/repository"
 	"github.com/BerkCicekler/shoe-api/service/auth"
 	"github.com/BerkCicekler/shoe-api/utils"
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UserServiceHandler struct {
@@ -20,9 +22,8 @@ func UserServiceNewHandler(repository repository.UsersRepo) *UserServiceHandler 
 }
 
 func (h *UserServiceHandler) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("/login", h.handleLogin).Methods("POST")
-	router.HandleFunc("/register", h.handleRegister).Methods("POST")
-
+	router.HandleFunc("/user/login", h.handleLogin).Methods("POST")
+	router.HandleFunc("/user/register", h.handleRegister).Methods("POST")
 }
 
 func (h *UserServiceHandler) handleLogin(w http.ResponseWriter, r *http.Request) {
@@ -49,13 +50,16 @@ func (h *UserServiceHandler) handleLogin(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	token, err := auth.CreateJWT(u.ID)
+	token, err := auth.CreateJWT(u.ID.Hex())
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": token})
+	userResponse := model.UserLoginResponseFromUser(u)
+	userResponse.Token = token
+
+	utils.WriteJSON(w, http.StatusOK, userResponse)
 }
 
 func (h *UserServiceHandler) handleRegister(w http.ResponseWriter, r *http.Request) {
@@ -85,16 +89,30 @@ func (h *UserServiceHandler) handleRegister(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	obId := primitive.NewObjectID()
+
 	result, err := h.repository.InsertUser(&model.User{
+		ID: obId,
 		UserName: user.UserName,
 		Email: user.Email,
 		PhoneNumber: user.PhoneNumber,
 		Password: hashedPassword,
 	})
+	_ = result
+
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+	
+	token, err := auth.CreateJWT(obId.Hex())
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusCreated, nil)
+	userResponse := model.UserLoginResponseFromUser(&user)
+	userResponse.Token = token
+
+	utils.WriteJSON(w, http.StatusCreated, userResponse)
 }

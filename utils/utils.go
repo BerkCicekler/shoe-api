@@ -5,12 +5,17 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 )
 
+var Validate = validator.New()
 
 func WriteJSON(w http.ResponseWriter, status int, v any) error {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(status)
+	if v == nil {
+		v = map[string]string{}
+	}
 	return json.NewEncoder(w).Encode(v)
 }
 
