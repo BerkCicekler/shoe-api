@@ -5,14 +5,14 @@ import (
 
 	"github.com/BerkCicekler/shoe-api/model"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type UsersRepo struct {
 	MongoCollection *mongo.Collection	
 }
 
-func (r *UsersRepo) InsertUser(user *model.User) (interface{}, error) {
+func (r *UsersRepo) InsertUser(user *model.User) (*mongo.InsertOneResult, error) {
 	result, err := r.MongoCollection.InsertOne(context.Background(), user)
 	if err != nil {
 		return nil, err
@@ -22,9 +22,8 @@ func (r *UsersRepo) InsertUser(user *model.User) (interface{}, error) {
 
 func (r *UsersRepo) FindUserByEmail(email string) (*model.User, error) {
 	var user model.User
-	filter := bson.D{{Key: "email", Value: email}}
-	err := r.MongoCollection.FindOne(context.Background(), filter).Decode(&user)
-
+	filter := bson.M{"email": email}
+	err := r.MongoCollection.FindOne(context.TODO(), filter).Decode(&user)
 	if err != nil {
 		return nil, err
 	}

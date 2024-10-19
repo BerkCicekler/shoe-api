@@ -62,7 +62,7 @@ func CreateJWT(userID string) (string, error) {
 		"expiresAt": time.Now().Add(expiration).Unix(),
 	})
 
-	tokenString, err := token.SignedString(os.Getenv("JWT_SECRET"))
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
 		return "", err
 	}

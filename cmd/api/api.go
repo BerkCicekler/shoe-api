@@ -4,7 +4,10 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/BerkCicekler/shoe-api/repository"
+	"github.com/BerkCicekler/shoe-api/service/user"
 	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type APIServer struct {
@@ -17,12 +20,16 @@ func NewAPIServer(addr string) *APIServer{
 	}
 }
 
-func (s *APIServer) Run() error {
+func (s *APIServer) Run(mongoDatabase *mongo.Database) error {
 	router:= mux.NewRouter()
 	subRouter:= router.PathPrefix("/api/v1").Subrouter()
 
-	// prevent not used
-	_ = subRouter
+
+	userRepository := repository.UsersRepo{
+		MongoCollection: mongoDatabase.Collection("users"),
+	}
+	userHandler := user.UserServiceNewHandler(userRepository)
+	userHandler.RegisterRoutes(subRouter)
 
 	log.Println("Listening on", s.addr)
 

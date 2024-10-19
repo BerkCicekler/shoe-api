@@ -7,9 +7,9 @@ import (
 
 	"github.com/BerkCicekler/shoe-api/cmd/api"
 	"github.com/joho/godotenv"
-	"go.mongodb.org/mongo-driver/v2/mongo"
-	"go.mongodb.org/mongo-driver/v2/mongo/options"
-	"go.mongodb.org/mongo-driver/v2/mongo/readpref"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 var mongoClient *mongo.Client
@@ -24,7 +24,7 @@ func init() {
 	log.Println("env file loaded")
 
 	// create mongodb client
-	mongoClient, err := mongo.Connect(options.Client().ApplyURI(os.Getenv("MONGO_URI")))
+	mongoClient, err = mongo.Connect(context.TODO(), options.Client().ApplyURI(os.Getenv("MONGO_URI")))
 
 
 	if err != nil {
@@ -42,6 +42,8 @@ func init() {
 func main() {
 	defer mongoClient.Disconnect(context.Background());
 
+	mongoDb := mongoClient.Database(os.Getenv("DB_NAME"))
+
 	api := api.NewAPIServer(":8080")
-	api.Run()
+	api.Run(mongoDb)
 }
