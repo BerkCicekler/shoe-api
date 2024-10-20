@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/BerkCicekler/shoe-api/repository"
+	"github.com/BerkCicekler/shoe-api/service/image"
 	"github.com/BerkCicekler/shoe-api/service/user"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -24,6 +25,8 @@ func (s *APIServer) Run(mongoDatabase *mongo.Database) error {
 	router:= mux.NewRouter()
 	subRouter:= router.PathPrefix("/api/v1").Subrouter()
 
+	imageHandler := image.ImageServiceHandler{}
+	imageHandler.RegisterRoutes(subRouter)
 
 	userRepository := repository.UsersRepo{
 		MongoCollection: mongoDatabase.Collection("users"),
