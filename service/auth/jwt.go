@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/BerkCicekler/shoe-api/utils"
+	"github.com/BerkCicekler/e-commerce-audio-api/utils"
 	"github.com/golang-jwt/jwt/v5"
 )
 
