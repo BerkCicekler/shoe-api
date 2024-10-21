@@ -18,7 +18,7 @@ func (s *ImageServiceHandler) handleImage(w http.ResponseWriter, r *http.Request
 
 	imagePath := "images/" + filename
 
-	w.Header().Set("Content-Type", "image/svg+xml")
+	w.Header().Set("Content-Type", "image/png")
 
 	http.ServeFile(w, r, imagePath)
 }
