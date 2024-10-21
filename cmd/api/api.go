@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/BerkCicekler/shoe-api/repository"
-	"github.com/BerkCicekler/shoe-api/service/image"
-	"github.com/BerkCicekler/shoe-api/service/user"
+	"github.com/BerkCicekler/e-commerce-audio-api/repository"
+	"github.com/BerkCicekler/e-commerce-audio-api/service/image"
+	"github.com/BerkCicekler/e-commerce-audio-api/service/user"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/mongo"
 )

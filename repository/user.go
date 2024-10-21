@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/BerkCicekler/shoe-api/model"
+	"github.com/BerkCicekler/e-commerce-audio-api/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )

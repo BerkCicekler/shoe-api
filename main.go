@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/BerkCicekler/shoe-api/cmd/api"
+	"github.com/BerkCicekler/e-commerce-audio-api/cmd/api"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
